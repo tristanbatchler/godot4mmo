@@ -144,17 +144,17 @@ global___PositionPacket = PositionPacket
 class DirectionPacket(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    X_FIELD_NUMBER: builtins.int
-    Y_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
+    DX_FIELD_NUMBER: builtins.int
+    DY_FIELD_NUMBER: builtins.int
+    dx: builtins.float
+    dy: builtins.float
     def __init__(
         self,
         *,
-        x: builtins.float = ...,
-        y: builtins.float = ...,
+        dx: builtins.float = ...,
+        dy: builtins.float = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["x", b"x", "y", b"y"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["dx", b"dx", "dy", b"dy"]) -> None: ...
 
 global___DirectionPacket = DirectionPacket
 

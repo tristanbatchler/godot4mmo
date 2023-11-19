@@ -20,7 +20,7 @@ message LoginPacket { string username = 1; string password = 2; }
 message RegisterPacket { string username = 1; string password = 2; }
 message ChatPacket { string msg = 1; }
 message PositionPacket { float x = 1; float y = 2; }
-message DirectionPacket { float x = 1; float y = 2; }
+message DirectionPacket { float dx = 1; float dy = 2; }
 // Add more packet messages here
 
 // Define the main Packet message

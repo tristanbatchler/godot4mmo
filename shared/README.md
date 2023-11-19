@@ -4,7 +4,7 @@ definition files, courtesy of [protobuf](https://developers.google.com/protocol-
 
 To generate the python files, run the following command from this folder:
 ```bash
-protoc -I="." --python_out="../server" --mypy_out="../server" "./packets.proto"
+protoc -I="." --python_out="../server/net" --mypy_out="../server/net" "./packets.proto"
 ```
 
 To generate the Godot files, install the `godobuf` plugin and configure it by pointing the 
