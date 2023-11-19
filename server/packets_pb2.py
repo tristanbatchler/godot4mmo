@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpackets.proto\x12\x07packets\"\n\n\x08OkPacket\"\x1c\n\nDenyPacket\x12\x0e\n\x06reason\x18\x01 \x01(\t\"1\n\x0bLoginPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"4\n\x0eRegisterPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x19\n\nChatPacket\x12\x0b\n\x03msg\x18\x01 \x01(\t\"&\n\x0ePositionPacket\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\"\'\n\x0f\x44irectionPacket\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\"\xab\x02\n\x06Packet\x12\x1f\n\x02ok\x18\x01 \x01(\x0b\x32\x11.packets.OkPacketH\x00\x12#\n\x04\x64\x65ny\x18\x02 \x01(\x0b\x32\x13.packets.DenyPacketH\x00\x12%\n\x05login\x18\x03 \x01(\x0b\x32\x14.packets.LoginPacketH\x00\x12+\n\x08register\x18\x04 \x01(\x0b\x32\x17.packets.RegisterPacketH\x00\x12#\n\x04\x63hat\x18\x05 \x01(\x0b\x32\x13.packets.ChatPacketH\x00\x12+\n\x08position\x18\x06 \x01(\x0b\x32\x17.packets.PositionPacketH\x00\x12-\n\tdirection\x18\x07 \x01(\x0b\x32\x18.packets.DirectionPacketH\x00\x42\x06\n\x04typeb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpackets.proto\x12\x07packets\"\n\n\x08OkPacket\"\x1c\n\nDenyPacket\x12\x0e\n\x06reason\x18\x01 \x01(\t\"1\n\x0bLoginPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"4\n\x0eRegisterPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x19\n\nChatPacket\x12\x0b\n\x03msg\x18\x01 \x01(\t\"&\n\x0ePositionPacket\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\"\'\n\x0f\x44irectionPacket\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\"\xd3\x02\n\x06Packet\x12!\n\x04type\x18\x01 \x01(\x0e\x32\x13.packets.PacketType\x12\x1f\n\x02ok\x18\x02 \x01(\x0b\x32\x11.packets.OkPacketH\x00\x12#\n\x04\x64\x65ny\x18\x03 \x01(\x0b\x32\x13.packets.DenyPacketH\x00\x12%\n\x05login\x18\x04 \x01(\x0b\x32\x14.packets.LoginPacketH\x00\x12+\n\x08register\x18\x05 \x01(\x0b\x32\x17.packets.RegisterPacketH\x00\x12#\n\x04\x63hat\x18\x06 \x01(\x0b\x32\x13.packets.ChatPacketH\x00\x12+\n\x08position\x18\x07 \x01(\x0b\x32\x17.packets.PositionPacketH\x00\x12-\n\tdirection\x18\x08 \x01(\x0b\x32\x18.packets.DirectionPacketH\x00\x42\x0b\n\tsubpacket*^\n\nPacketType\x12\x06\n\x02OK\x10\x00\x12\x08\n\x04\x44\x45NY\x10\x01\x12\t\n\x05LOGIN\x10\x02\x12\x0c\n\x08REGISTER\x10\x03\x12\x08\n\x04\x43HAT\x10\x04\x12\x0c\n\x08POSITION\x10\x05\x12\r\n\tDIRECTION\x10\x06\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -21,6 +21,8 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'packets_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
+  _globals['_PACKETTYPE']._serialized_start=623
+  _globals['_PACKETTYPE']._serialized_end=717
   _globals['_OKPACKET']._serialized_start=26
   _globals['_OKPACKET']._serialized_end=36
   _globals['_DENYPACKET']._serialized_start=38
@@ -36,5 +38,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_DIRECTIONPACKET']._serialized_start=240
   _globals['_DIRECTIONPACKET']._serialized_end=279
   _globals['_PACKET']._serialized_start=282
-  _globals['_PACKET']._serialized_end=581
+  _globals['_PACKET']._serialized_end=621
 # @@protoc_insertion_point(module_scope)

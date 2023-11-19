@@ -4,18 +4,50 @@ isort:skip_file
 """
 import builtins
 import google.protobuf.descriptor
+import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import sys
+import typing
 
-if sys.version_info >= (3, 8):
+if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class _PacketType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _PacketTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PacketType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    OK: _PacketType.ValueType  # 0
+    DENY: _PacketType.ValueType  # 1
+    LOGIN: _PacketType.ValueType  # 2
+    REGISTER: _PacketType.ValueType  # 3
+    CHAT: _PacketType.ValueType  # 4
+    POSITION: _PacketType.ValueType  # 5
+    DIRECTION: _PacketType.ValueType  # 6
+    """Add more packet types here"""
+
+class PacketType(_PacketType, metaclass=_PacketTypeEnumTypeWrapper):
+    """Define an enum for packet types"""
+
+OK: PacketType.ValueType  # 0
+DENY: PacketType.ValueType  # 1
+LOGIN: PacketType.ValueType  # 2
+REGISTER: PacketType.ValueType  # 3
+CHAT: PacketType.ValueType  # 4
+POSITION: PacketType.ValueType  # 5
+DIRECTION: PacketType.ValueType  # 6
+"""Add more packet types here"""
+global___PacketType = PacketType
+
 @typing_extensions.final
 class OkPacket(google.protobuf.message.Message):
+    """Define your packet messages"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     def __init__(
@@ -128,8 +160,11 @@ global___DirectionPacket = DirectionPacket
 
 @typing_extensions.final
 class Packet(google.protobuf.message.Message):
+    """Define the main Packet message"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    TYPE_FIELD_NUMBER: builtins.int
     OK_FIELD_NUMBER: builtins.int
     DENY_FIELD_NUMBER: builtins.int
     LOGIN_FIELD_NUMBER: builtins.int
@@ -137,6 +172,7 @@ class Packet(google.protobuf.message.Message):
     CHAT_FIELD_NUMBER: builtins.int
     POSITION_FIELD_NUMBER: builtins.int
     DIRECTION_FIELD_NUMBER: builtins.int
+    type: global___PacketType.ValueType
     @property
     def ok(self) -> global___OkPacket: ...
     @property
@@ -150,10 +186,12 @@ class Packet(google.protobuf.message.Message):
     @property
     def position(self) -> global___PositionPacket: ...
     @property
-    def direction(self) -> global___DirectionPacket: ...
+    def direction(self) -> global___DirectionPacket:
+        """Add more packet types here"""
     def __init__(
         self,
         *,
+        type: global___PacketType.ValueType = ...,
         ok: global___OkPacket | None = ...,
         deny: global___DenyPacket | None = ...,
         login: global___LoginPacket | None = ...,
@@ -162,8 +200,8 @@ class Packet(google.protobuf.message.Message):
         position: global___PositionPacket | None = ...,
         direction: global___DirectionPacket | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["chat", b"chat", "deny", b"deny", "direction", b"direction", "login", b"login", "ok", b"ok", "position", b"position", "register", b"register", "type", b"type"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["chat", b"chat", "deny", b"deny", "direction", b"direction", "login", b"login", "ok", b"ok", "position", b"position", "register", b"register", "type", b"type"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["type", b"type"]) -> typing_extensions.Literal["ok", "deny", "login", "register", "chat", "position", "direction"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["chat", b"chat", "deny", b"deny", "direction", b"direction", "login", b"login", "ok", b"ok", "position", b"position", "register", b"register", "subpacket", b"subpacket"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["chat", b"chat", "deny", b"deny", "direction", b"direction", "login", b"login", "ok", b"ok", "position", b"position", "register", b"register", "subpacket", b"subpacket", "type", b"type"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["subpacket", b"subpacket"]) -> typing_extensions.Literal["ok", "deny", "login", "register", "chat", "position", "direction"] | None: ...
 
 global___Packet = Packet

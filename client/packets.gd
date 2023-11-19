@@ -661,6 +661,16 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
+enum PacketType {
+	OK = 0,
+	DENY = 1,
+	LOGIN = 2,
+	REGISTER = 3,
+	CHAT = 4,
+	POSITION = 5,
+	DIRECTION = 6
+}
+
 class OkPacket:
 	func _init():
 		var service
@@ -994,43 +1004,48 @@ class Packet:
 	func _init():
 		var service
 		
-		_ok = PBField.new("ok", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_type = PBField.new("type", PB_DATA_TYPE.ENUM, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.ENUM])
+		service = PBServiceField.new()
+		service.field = _type
+		data[_type.tag] = service
+		
+		_ok = PBField.new("ok", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _ok
 		service.func_ref = Callable(self, "new_ok")
 		data[_ok.tag] = service
 		
-		_deny = PBField.new("deny", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_deny = PBField.new("deny", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _deny
 		service.func_ref = Callable(self, "new_deny")
 		data[_deny.tag] = service
 		
-		_login = PBField.new("login", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_login = PBField.new("login", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _login
 		service.func_ref = Callable(self, "new_login")
 		data[_login.tag] = service
 		
-		_register = PBField.new("register", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_register = PBField.new("register", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _register
 		service.func_ref = Callable(self, "new_register")
 		data[_register.tag] = service
 		
-		_chat = PBField.new("chat", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 5, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_chat = PBField.new("chat", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _chat
 		service.func_ref = Callable(self, "new_chat")
 		data[_chat.tag] = service
 		
-		_position = PBField.new("position", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 6, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_position = PBField.new("position", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _position
 		service.func_ref = Callable(self, "new_position")
 		data[_position.tag] = service
 		
-		_direction = PBField.new("direction", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 7, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+		_direction = PBField.new("direction", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 8, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
 		service = PBServiceField.new()
 		service.field = _direction
 		service.func_ref = Callable(self, "new_direction")
@@ -1038,178 +1053,187 @@ class Packet:
 		
 	var data = {}
 	
+	var _type: PBField
+	func get_type():
+		return _type.value
+	func clear_type() -> void:
+		data[1].state = PB_SERVICE_STATE.UNFILLED
+		_type.value = DEFAULT_VALUES_3[PB_DATA_TYPE.ENUM]
+	func set_type(value) -> void:
+		_type.value = value
+	
 	var _ok: PBField
 	func has_ok() -> bool:
-		return data[1].state == PB_SERVICE_STATE.FILLED
+		return data[2].state == PB_SERVICE_STATE.FILLED
 	func get_ok() -> OkPacket:
 		return _ok.value
 	func clear_ok() -> void:
-		data[1].state = PB_SERVICE_STATE.UNFILLED
+		data[2].state = PB_SERVICE_STATE.UNFILLED
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_ok() -> OkPacket:
-		data[1].state = PB_SERVICE_STATE.FILLED
+		data[2].state = PB_SERVICE_STATE.FILLED
 		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[2].state = PB_SERVICE_STATE.UNFILLED
-		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[7].state = PB_SERVICE_STATE.UNFILLED
+		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_ok.value = OkPacket.new()
 		return _ok.value
 	
 	var _deny: PBField
 	func has_deny() -> bool:
-		return data[2].state == PB_SERVICE_STATE.FILLED
+		return data[3].state == PB_SERVICE_STATE.FILLED
 	func get_deny() -> DenyPacket:
 		return _deny.value
 	func clear_deny() -> void:
-		data[2].state = PB_SERVICE_STATE.UNFILLED
+		data[3].state = PB_SERVICE_STATE.UNFILLED
 		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_deny() -> DenyPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		data[2].state = PB_SERVICE_STATE.FILLED
+		data[2].state = PB_SERVICE_STATE.UNFILLED
+		data[3].state = PB_SERVICE_STATE.FILLED
 		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[3].state = PB_SERVICE_STATE.UNFILLED
-		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[7].state = PB_SERVICE_STATE.UNFILLED
+		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_deny.value = DenyPacket.new()
 		return _deny.value
 	
 	var _login: PBField
 	func has_login() -> bool:
-		return data[3].state == PB_SERVICE_STATE.FILLED
+		return data[4].state == PB_SERVICE_STATE.FILLED
 	func get_login() -> LoginPacket:
 		return _login.value
 	func clear_login() -> void:
-		data[3].state = PB_SERVICE_STATE.UNFILLED
+		data[4].state = PB_SERVICE_STATE.UNFILLED
 		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_login() -> LoginPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		data[3].state = PB_SERVICE_STATE.FILLED
+		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[3].state = PB_SERVICE_STATE.UNFILLED
+		data[4].state = PB_SERVICE_STATE.FILLED
 		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[4].state = PB_SERVICE_STATE.UNFILLED
-		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[7].state = PB_SERVICE_STATE.UNFILLED
+		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_login.value = LoginPacket.new()
 		return _login.value
 	
 	var _register: PBField
 	func has_register() -> bool:
-		return data[4].state == PB_SERVICE_STATE.FILLED
+		return data[5].state == PB_SERVICE_STATE.FILLED
 	func get_register() -> RegisterPacket:
 		return _register.value
 	func clear_register() -> void:
-		data[4].state = PB_SERVICE_STATE.UNFILLED
+		data[5].state = PB_SERVICE_STATE.UNFILLED
 		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_register() -> RegisterPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		data[4].state = PB_SERVICE_STATE.FILLED
+		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[4].state = PB_SERVICE_STATE.UNFILLED
+		data[5].state = PB_SERVICE_STATE.FILLED
 		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[5].state = PB_SERVICE_STATE.UNFILLED
-		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[7].state = PB_SERVICE_STATE.UNFILLED
+		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_register.value = RegisterPacket.new()
 		return _register.value
 	
 	var _chat: PBField
 	func has_chat() -> bool:
-		return data[5].state == PB_SERVICE_STATE.FILLED
+		return data[6].state == PB_SERVICE_STATE.FILLED
 	func get_chat() -> ChatPacket:
 		return _chat.value
 	func clear_chat() -> void:
-		data[5].state = PB_SERVICE_STATE.UNFILLED
+		data[6].state = PB_SERVICE_STATE.UNFILLED
 		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_chat() -> ChatPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		data[5].state = PB_SERVICE_STATE.FILLED
+		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[5].state = PB_SERVICE_STATE.UNFILLED
+		data[6].state = PB_SERVICE_STATE.FILLED
 		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[6].state = PB_SERVICE_STATE.UNFILLED
-		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[7].state = PB_SERVICE_STATE.UNFILLED
+		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_chat.value = ChatPacket.new()
 		return _chat.value
 	
 	var _position: PBField
 	func has_position() -> bool:
-		return data[6].state == PB_SERVICE_STATE.FILLED
+		return data[7].state == PB_SERVICE_STATE.FILLED
 	func get_position() -> PositionPacket:
 		return _position.value
 	func clear_position() -> void:
-		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.UNFILLED
 		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_position() -> PositionPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		data[6].state = PB_SERVICE_STATE.FILLED
+		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[6].state = PB_SERVICE_STATE.UNFILLED
+		data[7].state = PB_SERVICE_STATE.FILLED
 		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_position.value = PositionPacket.new()
 		return _position.value
 	
 	var _direction: PBField
 	func has_direction() -> bool:
-		return data[7].state == PB_SERVICE_STATE.FILLED
+		return data[8].state == PB_SERVICE_STATE.FILLED
 	func get_direction() -> DirectionPacket:
 		return _direction.value
 	func clear_direction() -> void:
-		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.UNFILLED
 		_direction.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 	func new_direction() -> DirectionPacket:
 		_ok.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-		data[1].state = PB_SERVICE_STATE.UNFILLED
-		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[2].state = PB_SERVICE_STATE.UNFILLED
-		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_deny.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[3].state = PB_SERVICE_STATE.UNFILLED
-		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_login.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[4].state = PB_SERVICE_STATE.UNFILLED
-		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_register.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[5].state = PB_SERVICE_STATE.UNFILLED
-		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		_chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
 		data[6].state = PB_SERVICE_STATE.UNFILLED
-		data[7].state = PB_SERVICE_STATE.FILLED
+		_position.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+		data[7].state = PB_SERVICE_STATE.UNFILLED
+		data[8].state = PB_SERVICE_STATE.FILLED
 		_direction.value = DirectionPacket.new()
 		return _direction.value
 	
