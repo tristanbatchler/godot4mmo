@@ -1,0 +1,45 @@
+syntax = "proto3";
+package packets;
+
+message OkPacket {
+}
+
+message DenyPacket {
+    string reason = 1;
+}
+
+message LoginPacket {
+    string username = 1;
+    string password = 2;
+}
+
+message RegisterPacket {
+    string username = 1;
+    string password = 2;
+}
+
+message ChatPacket {
+    string msg = 1;
+}
+
+message PositionPacket {
+    float x = 1;
+    float y = 2;
+}
+
+message DirectionPacket {
+    float x = 1;
+    float y = 2;
+}
+
+message Packet {
+    oneof type {
+        OkPacket ok = 1;
+        DenyPacket deny = 2;
+        LoginPacket login = 3;
+        RegisterPacket register = 4;
+        ChatPacket chat = 5;
+        PositionPacket position = 6;
+        DirectionPacket direction = 7;
+    }
+}
