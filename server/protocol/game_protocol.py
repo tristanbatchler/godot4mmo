@@ -1,13 +1,19 @@
 import logging
-from trio_websocket import WebSocketConnection
 import server.net as packets
 import server.protocol.states as states
+from trio_websocket import WebSocketConnection
+from server.protocol.logging_adapter import ProtocolLoggerAdapter
 
 class GameProtocol:
-    def __init__(self, server_stream: WebSocketConnection):
+    def __init__(self, server_stream: WebSocketConnection, ident: int):
         self._server_connection: WebSocketConnection = server_stream
-        self.logger: logging.Logger = logging.getLogger("GameProtocol")
         self.state = states.EntryState(self)
+
+        # Give this protocol a unique identifier to improve logging
+        self.logger = ProtocolLoggerAdapter(logging.getLogger(__name__), {
+            'ident': ident,
+            'state': self.state
+        })
         
     async def start(self):
         try:
@@ -17,23 +23,24 @@ class GameProtocol:
                     break
                 await self._handle_message(data)
         except Exception as exc:
-            self.logger.error(f"Game protocol crashed: {exc!r}")
+            self.logger.error(f"Crashed: {exc!r}")
         finally:
-            self.logger.info("Game protocol stopped")
+            self.logger.info("Stopped")
 
     async def send_packet(self, packet: packets.Packet):
         await self._send_message(packet.SerializeToString())
 
     def set_state(self, state: states.ProtocolState):
-        self.logger.info(f"Game protocol state changed: {state.__class__.__name__}")
+        self.logger.info(f"State changing to {state}")
         self.state = state
+        self.logger.extra['state'] = state
 
     async def _read_message(self) -> bytes:
         try:
             return await self._server_connection.get_message()
         
         except Exception as exc:
-            self.logger.error(f"Game protocol read error: {exc}")
+            self.logger.error(f"Read error: {exc}")
             raise exc
 
     async def _send_message(self, message: bytes):
@@ -53,6 +60,6 @@ class GameProtocol:
             handler: callable = self.state.__getattribute__(handler_name)
             await handler(packet.__getattribute__(packet_type))
         except AttributeError:
-            self.logger.error(f"State {self.state} does not support handling of {packet_type} packets")
+            self.logger.error(f"Current state does not support handling of {packet_type} packets")
         except Exception as exc:
             self.logger.error(f"Packet handling error: {exc!r}")

@@ -24,3 +24,9 @@ class ProtocolState(ABC):
 
     async def handle_chat_packet(self, packet: Packet):
         await self.log_unregistered_packet(packet)
+
+    def __str__(self):
+        return self.__class__.__name__
+    
+    def __repr__(self):
+        return str(self)

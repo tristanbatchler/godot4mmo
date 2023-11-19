@@ -4,10 +4,14 @@ import logging
 import server.net as packets
 from server.protocol import GameProtocol
 
+num_connections = 0
+
 async def handle_connection(request: WebSocketRequest):
+    global num_connections
     logging.info("New connection")
     connection: WebSocketConnection = await request.accept()
-    proto: GameProtocol = GameProtocol(connection)
+    proto: GameProtocol = GameProtocol(connection, num_connections)
+    num_connections += 1
     await proto.start()
 
 
