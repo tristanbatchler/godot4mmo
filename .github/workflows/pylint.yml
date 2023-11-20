@@ -19,6 +19,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint
         pip install -r server/requirements.txt
+    - name: Generate protobuf packet definitions
+      run: |
+        protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
