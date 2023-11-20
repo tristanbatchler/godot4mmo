@@ -31,7 +31,6 @@ class GameServer:
         """
         Tells each connected protocol to tick.
         """
-        logging.debug("Tick")
         for protocol in self._connected_protocols:
             await protocol.tick()
 

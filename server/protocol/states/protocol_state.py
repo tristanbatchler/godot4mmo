@@ -20,37 +20,37 @@ class ProtocolState(ABC):
     def __init__(self, protocol: GameProtocol):
         self.proto = protocol
 
-    async def _log_unregistered_packet(self, packet: Packet):
+    def _log_unregistered_packet(self, packet: Packet):
         self.proto.logger.warning(f"Received {packet.DESCRIPTOR.name} packet in unregistered state")
         p: DenyPacket = DenyPacket()
         p.reason = "You cannot send that packet in this state"
-        await self.proto._send_packet(p)
+        self.proto.queue_outbound_packet(self.proto, p)
 
     # Maintain all handle_*_packet methods in alphabetical order. This means classes that inherit
     # from this class will have the deny packet handler by default, unless they specifically
     # override it.
 
     # pylint: disable=missing-function-docstring
-    async def handle_chat_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_chat_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_deny_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_deny_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_direction_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_direction_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_login_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_login_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_ok_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_ok_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_position_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_position_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
 
-    async def handle_register_packet(self, packet: Packet):
-        await self._log_unregistered_packet(packet)
+    def handle_register_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
     # pylint: enable=missing-function-docstring
 
     def __str__(self):

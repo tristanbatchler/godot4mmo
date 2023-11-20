@@ -43,7 +43,7 @@ class GameProtocol:
                 data = await self._read_message()
                 if data is None:
                     break
-                await self._handle_message(data)
+                self._handle_message(data)
         finally:
             self.logger.info("Stopped")
 
@@ -84,7 +84,7 @@ class GameProtocol:
         """
         self._outgoing_packets.put((other, packet))
 
-    def broadcast_packet(self, packet: packets.Packet, include_self: bool) -> None:
+    def broadcast_packet(self, packet: packets.Packet, include_self: bool = False) -> None:
         """
         Queues a packet on all connected protocols' outgoing packet queues, optionally including 
         this protocol.
@@ -94,7 +94,7 @@ class GameProtocol:
                 The packet to broadcast.
             include_self (bool): 
                 Whether to include this protocol in the broadcast (in turn, meaning the client
-                connected to this protocol will receive the packet directly).
+                connected to this protocol will receive the packet directly). Defaults to False.
 
         Returns:
             None
@@ -118,6 +118,7 @@ class GameProtocol:
             other.queue_outbound_packet(other, packet)
 
     async def _send_packet(self, packet: packets.Packet) -> None:
+        self.logger.debug(f"Sending packet: {packet}")
         await self._send_message(packet.SerializeToString())
 
     async def _read_message(self) -> Optional[bytes]:
@@ -133,9 +134,15 @@ class GameProtocol:
             raise exc
 
     async def _send_message(self, message: bytes) -> None:
-        await self._server_connection.send_message(message)
+        try:
+            await self._server_connection.send_message(message)
+        except ConnectionClosed:
+            self.logger.warning("Connection closed while sending message")
+        except Exception as exc:
+            self.logger.error(f"Send error: {exc}")
+            raise exc
 
-    async def _handle_message(self, data: bytes) -> None:
+    def _handle_message(self, data: bytes) -> None:
         try:
             packet: packets.Packet = packets.Packet.FromString(data)
         except DecodeError as exc:
@@ -144,8 +151,5 @@ class GameProtocol:
         # Dispatch to protocol state handler
         packet_type: str = packet.WhichOneof("subpacket")
         handler_name: str = f"handle_{packet_type}_packet"
-        try:
-            handler: callable = getattr(self.state, handler_name)
-            await handler(getattr(packet, packet_type))
-        except AttributeError:
-            self.logger.error(f"Current state does not support handling of {packet_type} packets")
+        handler: callable = getattr(self.state, handler_name)
+        handler(getattr(packet, packet_type))
