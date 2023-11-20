@@ -1,4 +1,7 @@
 server/venv/
+server/net/packets_pb2.py
+server/net/packets_pb2.pyi
 client/.godot/
 client/addons/
+client/packets.gd
 __pycache__/

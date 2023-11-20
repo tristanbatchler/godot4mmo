@@ -1,48 +1,72 @@
-This is a reboot of the original 
-[Godot Python MMO](https://tbat.me/projects/godot-python-mmo-tutorial-series) project. This time, 
-I will be using everything I have learned, as well as community suggestions, to make a better 
-version of the game using Godot 4 for the front end, and more modern Python frameworks for the 
-backend.
+# Godot 4 MMO Project Reboot
 
-## Quick Start
-1. **Install Python.** Preferably the latest version from the [official website](https://www.python.org/downloads/). Windows users should avoid the Microsoft Store version of Python at all costs.
+Welcome to the reboot of the [Godot Python MMO](https://tbat.me/projects/godot-python-mmo-tutorial-series) project! This enhanced version aims to build upon the original project, incorporating valuable community input and the latest technological advancements. The game is now powered by Godot 4 for the frontend and a modern Python framework for the backend, promising an even more robust and engaging gaming experience.
 
-1. **Clone the repository.**
-    ```bash
-    git clone https://github.com/tristanbatchler/godot4mmo
-    ```
-    ```bash
-    cd godot4mmo
-    ```
+## Server Quick Start Guide
 
-1. **Move into the server directory.**
-    ```bash
-    cd server
-    ```
+### 1. Install Python
+> **Recommended:** Download the latest version from the [official Python website](https://www.python.org/downloads/)
 
-1. **Setup the Python virtual environment for the backend.**
-    ```bash
-    python -m venv server/venv
-    ```
+> *Note for Windows Users:* avoid the Microsoft Store version of Python
 
-1. **Activate the virtual environment.** If you are using Windows, you will need to run the following command:
+### 2. Clone the Repository
+```bash
+git clone https://github.com/tristanbatchler/godot4mmo
+```
+
+### 3. Navigate to the Server Directory
+```bash
+cd godot4mmo/server
+```
+
+### 4. Setup the Python Virtual Environment**
+```bash
+python -m venv server/venv
+```
+
+### 5. Activate the Virtual Environment
+* **Windows users:**
     ```powershell
-    # Windows ONLY
     server\venv\Scripts\activate
     ```
 
-    For everyone else:
+* **Everyone else:**
     ```bash
-    # Linux / MacOS
     source server/venv/bin/activate
     ```
 
-1. **Install the Python dependencies.**
-    ```bash
-    pip install -r server/requirements.txt
-    ```
+### 6. Install the Python Dependencies
+```bash
+pip install -r server/requirements.txt
+```
 
-1. **Run the server.**
-    ```bash
-    python -m server
-    ```
+### 7. Generate the Packet Definitions 
+> For more information, see the [shared README](shared/README.md).
+```bash
+protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"
+```
+
+### 8. Run the Server
+```bash
+python -m server
+```
+
+## Client Quick Start
+### 1. Install Godot 4
+> Download the latest version from the [official website](https://godotengine.org/download)
+
+### 2. Install the Godobuf Plugin 
+> Instructions on the [Godobuf repository](https://github.com/oniksan/godobuf)
+
+### 3. Generate the Packet Definitions
+> For more information, see the [shared README](shared/README.md)
+
+1. Open the project in Godot.
+1. Open the Godobuf tab. Note this tab will only appear if you have installed the Godobuf plugin. It may be hidden because it is the last tab.
+    ![Godobuf tab](https://github.com/oniksan/godobuf/raw/master/readme-images/7.png)
+1. Choose the "Input protobuf file" to be the `shared/packets.proto` file.
+1. Choose the "Output GDScript file" to be `client/packets.gd`.
+1. Click "Compile"
+
+### 4. Run the Game
+> Press the play button in the top right corner of the Godot editor
