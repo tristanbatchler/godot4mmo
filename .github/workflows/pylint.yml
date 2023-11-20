@@ -17,6 +17,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install pylint
           pip install -r server/requirements.txt
       - name: Install Protocol Buffers Compiler
         run: |
