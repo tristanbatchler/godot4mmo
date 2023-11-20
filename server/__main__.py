@@ -2,19 +2,18 @@
 This is the main entrypoint for the server. It creates a trio server that listens for websocket 
 connections. Each connection is handled by a GameProtocol instance.
 """
-import dataclasses
 import logging
 import trio
 from trio_websocket import serve_websocket, WebSocketConnection, WebSocketRequest
 from server.protocol import GameProtocol
 
-@dataclasses.dataclass
 class GameServer:
     """
     Represents a websocket server that handles new connections for the game.
     """
-    def __init__(self):
-        self._num_connections: int = 0
+    def __init__(self, tick_rate: float) -> None:
+        self._connected_protocols: list[GameProtocol] = []
+        self._tick_rate: float = tick_rate
 
     async def handle_connection(self, request: WebSocketRequest):
         """
@@ -24,19 +23,43 @@ class GameServer:
         """
         logging.info("New connection")
         connection: WebSocketConnection = await request.accept()
-        proto: GameProtocol = GameProtocol(connection, self._num_connections)
-        self._num_connections += 1
+        proto: GameProtocol = GameProtocol(connection, self._connected_protocols)
+        self._connected_protocols.append(proto)
         await proto.start()
 
+    async def tick(self) -> None:
+        """
+        Tells each connected protocol to tick.
+        """
+        logging.debug("Tick")
+        for protocol in self._connected_protocols:
+            await protocol.tick()
 
-async def main():
+    async def run(self) -> None:
+        """
+        Runs the game server. This function starts the tick loop.
+        """
+        while True:
+            start_time: float = trio.current_time()
+            await self.tick()
+            elapsed: float = trio.current_time() - start_time
+            diff: float = self._tick_rate - elapsed
+            if diff > 0:
+                await trio.sleep(diff)
+            elif diff < 0:
+                logging.warning("Tick time budget exceeded by %s seconds", -diff)
+
+
+async def main() -> None:
     """
     Serves the websocket server and handles new connections.
     """
-    server: GameServer = GameServer()
-    await serve_websocket(server.handle_connection, 'localhost', 8081, ssl_context=None)
+    server: GameServer = GameServer(1)
+    async with trio.open_nursery() as nursery:
+        nursery.start_soon(serve_websocket, server.handle_connection, 'localhost', 8081, None)
+        nursery.start_soon(server.run)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     logging.info("Server starting")
     trio.run(main)

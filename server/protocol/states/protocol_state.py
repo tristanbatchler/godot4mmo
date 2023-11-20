@@ -24,7 +24,7 @@ class ProtocolState(ABC):
         self.proto.logger.warning(f"Received {packet.DESCRIPTOR.name} packet in unregistered state")
         p: DenyPacket = DenyPacket()
         p.reason = "You cannot send that packet in this state"
-        await self.proto.send_packet(p)
+        await self.proto._send_packet(p)
 
     # Maintain all handle_*_packet methods in alphabetical order. This means classes that inherit
     # from this class will have the deny packet handler by default, unless they specifically
