@@ -1,7 +1,16 @@
+"""
+Entry state for the protocol. This state is used for handling packets that are sent/received before 
+the player has logged in.
+"""
 from server.net import Packet
 from server.protocol.states.protocol_state import ProtocolState
 
 class EntryState(ProtocolState):
+    """
+    Represents the entry state of the protocol.
+
+    This state handles packets that are sent/received before the player has logged in.
+    """
     async def handle_login_packet(self, packet: Packet):
         self.proto.logger.info(f"Received login packet: {packet}")
 
