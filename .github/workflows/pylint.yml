@@ -26,6 +26,9 @@ jobs:
       - name: Generate protobuf packet definitions
         run: |
           protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"
+      - name: Add server to PYTHONPATH
+        run: |
+          echo "export PYTHONPATH=$PYTHONPATH:$(pwd)/server" >> $GITHUB_ENV
       - name: Analysing the code with pylint
         run: |
           pylint $(git ls-files '*.py')
