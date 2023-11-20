@@ -2,11 +2,13 @@
 This is the main entrypoint for the server. It creates a trio server that listens for websocket 
 connections. Each connection is handled by a GameProtocol instance.
 """
+import dataclasses
 import logging
 import trio
 from trio_websocket import serve_websocket, WebSocketConnection, WebSocketRequest
 from server.protocol import GameProtocol
 
+@dataclasses.dataclass
 class GameServer:
     """
     Represents a websocket server that handles new connections for the game.
