@@ -1,4 +1,5 @@
 trio-websocket
 sqlalchemy_aio
+protobuf
 mypy-protobuf
 types-protobuf
