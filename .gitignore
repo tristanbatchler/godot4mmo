@@ -1,5 +1,4 @@
 server/venv/
 client/.godot/
 client/addons/
-**/__pycache__/
-
+__pycache__/
