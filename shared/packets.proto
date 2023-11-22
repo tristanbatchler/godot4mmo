@@ -1,8 +1,8 @@
 syntax = "proto3";
 package packets;
 
-// Define your packet messages
-message OkPacket { }
+// Define your packet messages. No empty messages allowed.
+message OkPacket { string msg = 1; }
 message DenyPacket { string reason = 1; }
 message LoginPacket { string username = 1; string password = 2; }
 message RegisterPacket { string username = 1; string password = 2; }

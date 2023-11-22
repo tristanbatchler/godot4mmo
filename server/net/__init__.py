@@ -16,8 +16,8 @@ def _create_packet(packet_type: Packet, **kwargs) -> Packet:
     return p
 
 # pylint: disable=missing-function-docstring
-def ok() -> Packet:
-    return _create_packet(OkPacket)
+def ok(message: str) -> Packet:
+    return _create_packet(OkPacket, msg=message)
 
 def deny(reason: str) -> Packet:
     return _create_packet(DenyPacket, reason=reason)

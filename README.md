@@ -74,6 +74,7 @@ python -m server
 ## To Add a New Packet
 To add a new packet, there are a few places you need to make changes:
 1. Add the packet definition to `shared/packets.proto`
+    > *Note:* all packets must have at least one field, even if it is a dummy field
 1. Generate the packet definitions for the server and client
     * For the server: `protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"`
     * For the client: click the "Compile" button in the Godobuf tab
@@ -83,3 +84,4 @@ To add a new packet, there are a few places you need to make changes:
 
 ## Todo
 * [ ] Add helper functions for packet creation client-side
+* [ ] Handle packets that have no fields (e.g. OK packet)
