@@ -8,8 +8,12 @@ signal error(code: int)
 
 var _socket: WebSocketPeer = WebSocketPeer.new()
 
+@export var hostname: String = "localhost"
+@export var port: int = 8081
+
 func _ready() -> void:
 	set_process(false)	# Don't poll until a connection has been made
+	connect_to_server(hostname, port)
 	
 func connect_to_server(hostname: String, port: int) -> void:
 	var url: String = "ws://%s:%d" % [hostname, port]
@@ -72,4 +76,3 @@ func send_packet(packet: Packets.Packet) -> void:
 		printerr("Error sending data. Error code: ", err)
 		set_process(false)
 		error.emit(err)
-

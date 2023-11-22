@@ -3,5 +3,7 @@ server/net/packets_pb2.py
 server/net/packets_pb2.pyi
 client/.godot/
 client/addons/
+client/exports/
 client/packets.gd
+client/export_presets.cfg
 __pycache__/

@@ -19,4 +19,4 @@ class EntryState(ProtocolState):
 
     def handle_chat_packet(self, packet: Packet):
         self.proto.logger.info(f"Received chat packet: {packet}")
-        self.proto.broadcast_packet(chat(packet.msg), include_self=True)
+        self.proto.broadcast_packet(chat(packet.msg))

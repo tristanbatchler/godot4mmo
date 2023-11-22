@@ -136,8 +136,6 @@ class GameProtocol:
     async def _send_message(self, message: bytes) -> None:
         try:
             await self._server_connection.send_message(message)
-        except ConnectionClosed:
-            self.logger.warning("Connection closed while sending message")
         except Exception as exc:
             self.logger.error(f"Send error: {exc}")
             raise exc

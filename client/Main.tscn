@@ -1,6 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://cttmtoxyfynkp"]
+[gd_scene load_steps=5 format=3 uid="uid://cttmtoxyfynkp"]
 
-[ext_resource type="Script" path="res://Main.gd" id="1_yselb"]
+[ext_resource type="Script" path="res://Main.gd" id="1_dtm5h"]
+[ext_resource type="PackedScene" uid="uid://lddonltagi6g" path="res://Chatbox.tscn" id="2_7t5jo"]
+[ext_resource type="Script" path="res://Chatbox.gd" id="3_bu61p"]
+[ext_resource type="PackedScene" uid="uid://cfnn61xuyhm4s" path="res://NetworkClient.tscn" id="4_hb3v7"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_yselb")
+script = ExtResource("1_dtm5h")
+
+[node name="Chatbox" parent="." instance=ExtResource("2_7t5jo")]
+script = ExtResource("3_bu61p")
+
+[node name="NetworkClient" parent="." instance=ExtResource("4_hb3v7")]
+
+[connection signal="chat_sent" from="Chatbox" to="." method="_on_chatbox_chat_sent"]
+[connection signal="connected" from="NetworkClient" to="." method="_on_network_client_connected"]
+[connection signal="disconnected" from="NetworkClient" to="." method="_on_network_client_disconnected"]
+[connection signal="error" from="NetworkClient" to="." method="_on_network_client_error"]
+[connection signal="received" from="NetworkClient" to="." method="_on_network_client_received"]
