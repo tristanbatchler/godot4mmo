@@ -14,6 +14,7 @@ class GameServer:
     def __init__(self, tick_rate: float) -> None:
         self._connected_protocols: list[GameProtocol] = []
         self._tick_rate: float = tick_rate
+        self._num_connections = 0
 
     async def handle_connection(self, request: WebSocketRequest):
         """
@@ -21,9 +22,11 @@ class GameServer:
         new connection is made. This function creates a new GameProtocol instance for the connection 
         and starts it.
         """
+        self._num_connections += 1
         logging.info("New connection")
         connection: WebSocketConnection = await request.accept()
-        proto: GameProtocol = GameProtocol(connection, self._connected_protocols)
+        proto: GameProtocol = GameProtocol(connection, self._connected_protocols,
+                                           self._num_connections)
         self._connected_protocols.append(proto)
         await proto.start()
 
@@ -53,7 +56,7 @@ async def main() -> None:
     """
     Serves the websocket server and handles new connections.
     """
-    server: GameServer = GameServer(1)
+    server: GameServer = GameServer(1/20)
     async with trio.open_nursery() as nursery:
         nursery.start_soon(serve_websocket, server.handle_connection, 'localhost', 8081, None)
         nursery.start_soon(server.run)

@@ -16,15 +16,16 @@ class GameProtocol:
     Represents the game protocol used for communication between the server and clients.
     """
     def __init__(self, server_stream: WebSocketConnection,
-                 other_protocols: list[GameProtocol]) -> None:
+                 other_protocols: list[GameProtocol], ident: int) -> None:
         self._server_connection: WebSocketConnection = server_stream
         self._other_protocols: list[GameProtocol] = other_protocols
         self._outgoing_packets: Queue[tuple[GameProtocol, packets.Packet]] = Queue()
+        self._ident: int = ident
         self.state = states.EntryState(self)
 
         # Give this protocol a unique identifier to improve logging
         self.logger = ProtocolLoggerAdapter(logging.getLogger(__name__), {
-            'ident': len(other_protocols),
+            'ident': self._ident,
             'state': self.state
         })
 
@@ -45,7 +46,10 @@ class GameProtocol:
                     break
                 self._handle_message(data)
         finally:
+            self.broadcast_packet(
+                packets.disconnect(f"Client #{self._ident} has disconnected"), include_self=False)
             self.logger.info("Stopped")
+            self._other_protocols.remove(self)
 
     def set_state(self, state: states.ProtocolState) -> None:
         """
@@ -126,7 +130,7 @@ class GameProtocol:
             return await self._server_connection.get_message()
 
         except ConnectionClosed:
-            self.logger.info("Connection closed")
+            self.logger.info("Connection closed on read")
             return None
 
         except Exception as exc:
@@ -136,6 +140,8 @@ class GameProtocol:
     async def _send_message(self, message: bytes) -> None:
         try:
             await self._server_connection.send_message(message)
+        except ConnectionClosed:
+            self.logger.warning("Connection closed on send")
         except Exception as exc:
             self.logger.error(f"Send error: {exc}")
             raise exc

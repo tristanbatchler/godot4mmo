@@ -39,6 +39,9 @@ class ProtocolState(ABC):
     def handle_direction_packet(self, packet: Packet):
         self._log_unregistered_packet(packet)
 
+    def handle_disconnect_packet(self, packet: Packet):
+        self._log_unregistered_packet(packet)
+
     def handle_login_packet(self, packet: Packet):
         self._log_unregistered_packet(packet)
 

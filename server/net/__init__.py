@@ -5,8 +5,8 @@ to create packets from the protobuf definitions. E.g. to create a deny packet, u
 keeping this module up to date with the protobuf definitions is recommended.
 """
 # pylint: disable=no-name-in-module
-from server.net.packets_pb2 import Packet, OkPacket, DenyPacket, LoginPacket, RegisterPacket, \
-    ChatPacket, PositionPacket, DirectionPacket
+from server.net.packets_pb2 import Packet, ChatPacket, DenyPacket, DirectionPacket, \
+    DisconnectPacket, LoginPacket, OkPacket, PositionPacket, RegisterPacket
 
 def _create_packet(packet_type: Packet, **kwargs) -> Packet:
     p: Packet = Packet()
@@ -27,6 +27,9 @@ def deny(reason: str) -> Packet:
 
 def direction(dx: float, dy: float) -> Packet:
     return _create_packet(DirectionPacket, dx=dx, dy=dy)
+
+def disconnect(reason: str) -> Packet:
+    return _create_packet(DisconnectPacket, reason=reason)
 
 def login(username: str, password: str) -> Packet:
     return _create_packet(LoginPacket, username=username, password=password)

@@ -13,6 +13,10 @@ func PLAY(packet: Packets.Packet):
 	if packet.has_chat():
 		var message: String = packet.get_chat().get_msg()
 		_chatbox.add_message(message)
+		
+	if packet.has_disconnect():
+		var reason: String = packet.get_disconnect().get_reason()
+		_chatbox.add_message("[color=#42D9FF]%s[/color]" % [reason])
 
 
 func _on_chatbox_chat_sent(message):
