@@ -1,3 +1,4 @@
+class_name NetworkClient
 extends Node
 const Packets = preload("res://packets.gd")
 
@@ -13,9 +14,9 @@ var _socket: WebSocketPeer = WebSocketPeer.new()
 
 func _ready() -> void:
 	set_process(false)	# Don't poll until a connection has been made
-	connect_to_server(hostname, port)
+	connect_to_server()
 	
-func connect_to_server(hostname: String, port: int) -> void:
+func connect_to_server() -> void:
 	var url: String = "ws://%s:%d" % [hostname, port]
 	var options: TLSOptions = TLSOptions.client_unsafe()
 	var err: int = _socket.connect_to_url(url, options)
