@@ -51,8 +51,13 @@ func _process(delta):
 	
 	previous_direction = direction
 
-func PLAY(packet_type: String, packet: Packets.Packet):
-	print("Received a %s packet" % [packet_type])
+func PLAY(packet: Packets.Packet):
+	if packet.has_chat():
+		print("Chat packet: %s" % [packet.get_chat().get_msg()])
+	elif packet.has_deny():
+		print("Deny packet: %s" % [packet.get_deny().get_reason()])
+	else:
+		print("Unknown packet")
 
 
 func _handle_client_connected():
@@ -64,8 +69,8 @@ func _handle_client_disconnected(code: int, reason: String):
 	get_tree().quit()
 
 
-func _handle_network_data(packet_type: String, packet: Packets.Packet):
-	state.call(packet_type, packet)
+func _handle_network_data(packet: Packets.Packet):
+	state.call(packet)
 
 
 func _handle_network_error(code: int):
