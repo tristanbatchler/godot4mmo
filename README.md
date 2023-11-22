@@ -70,3 +70,16 @@ python -m server
 
 ### 4. Run the Game
 > Press the play button in the top right corner of the Godot editor
+
+## To Add a New Packet
+To add a new packet, there are a few places you need to make changes:
+1. Add the packet definition to `shared/packets.proto`
+1. Generate the packet definitions for the server and client
+    * For the server: `protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"`
+    * For the client: click the "Compile" button in the Godobuf tab
+1. (Optional, but recommended) Add a helper function to `server/net/__init__.py` to allow for easy creation of the packet
+1. Add the default packet handler to the protocol state abstract class in `server/protocol/states/protocol_state.py`
+1. Implement any specific packet handling in whichever protocol state is appropriate, e.g. `server/protocol/states/entry.py`, etc.
+
+## Todo
+* [ ] Add helper functions for packet creation client-side

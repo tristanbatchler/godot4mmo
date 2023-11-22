@@ -10,11 +10,11 @@ class PlayState(ProtocolState):
     Represents the play state of the protocol. This state is used for handling packets that are 
     sent/received after the player has entered the game world.
     """
-    async def handle_login_packet(self, packet: Packet):
+    def handle_login_packet(self, packet: Packet):
         self.proto.logger.info(f"Received login packet: {packet}")
 
-    async def handle_register_packet(self, packet: Packet):
+    def handle_register_packet(self, packet: Packet):
         self.proto.logger.info(f"Received register packet: {packet}")
 
-    async def handle_chat_packet(self, packet: Packet):
+    def handle_chat_packet(self, packet: Packet):
         self.proto.logger.info(f"Received chat packet: {packet}")
