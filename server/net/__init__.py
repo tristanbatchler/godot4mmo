@@ -29,7 +29,7 @@ def register(username: str, password: str) -> Packet:
     return _create_packet(RegisterPacket, username=username, password=password)
 
 def chat(message: str) -> Packet:
-    return _create_packet(ChatPacket, message=message)
+    return _create_packet(ChatPacket, msg=message)
 
 def position(x: float, y: float) -> Packet:
     return _create_packet(PositionPacket, x=x, y=y)

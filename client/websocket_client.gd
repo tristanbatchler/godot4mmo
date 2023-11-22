@@ -2,7 +2,7 @@ extends Node
 const Packets = preload("res://packets.gd")
 
 signal connected
-signal received(packet: Packets.Packet)
+signal received(packet_type: String, packet: Packets.Packet)
 signal disconnected(code: int, reason: String)
 signal error(code: int)
 
@@ -52,7 +52,16 @@ func _process(delta) -> void:
 				set_process(false)
 				emit_signal("error", result_code)
 
-			received.emit(packet)
+			# Emit the packet type along with the specific packet itself
+			for parent_prop in packet.get_property_list():
+				if parent_prop["class_name"] == &"RefCounted":
+					var parent_prop_name: String = parent_prop["name"]
+					var parent_prop_value: Variant = packet.get(parent_prop_name)
+
+					var value: Variant = parent_prop_value.get("value")
+					if value != null:
+						# Now we know the type of the packet, so we can emit the signal
+						received.emit(parent_prop_name.trim_prefix('_'), packet)
 			
 	elif state == WebSocketPeer.STATE_CLOSING:
 		# Keep polling to achieve proper close.
