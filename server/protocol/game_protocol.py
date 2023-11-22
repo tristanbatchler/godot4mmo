@@ -72,12 +72,12 @@ class GameProtocol:
         self.state = state
         self.logger.extra['state'] = state
 
-    def queue_outbound_packet(self, other: GameProtocol, packet: packets.Packet) -> None:
+    def queue_outbound_packet(self, recipient: GameProtocol, packet: packets.Packet) -> None:
         """
         Queues up a packet to send to another protocol on the next tick.
 
         Args:
-            other (GameProtocol): 
+            recipient (GameProtocol): 
                 The protocol to send the packet to. If this is the same as this protocol, the packet 
                 will be sent directly to the connected client.
             packet (packets.Packet): 
@@ -86,7 +86,7 @@ class GameProtocol:
         Returns:
             None
         """
-        self._outgoing_packets.put((other, packet))
+        self._outgoing_packets.put((recipient, packet))
 
     def broadcast_packet(self, packet: packets.Packet, include_self: bool = False) -> None:
         """
@@ -103,10 +103,10 @@ class GameProtocol:
         Returns:
             None
         """
-        for protocol in self._other_protocols:
-            if protocol is self and not include_self:
+        for recipient in self._other_protocols:
+            if recipient is self and not include_self:
                 continue
-            protocol.queue_outbound_packet(protocol, packet)
+            recipient.queue_outbound_packet(recipient, packet)
 
     async def tick(self) -> None:
         """
@@ -115,11 +115,11 @@ class GameProtocol:
         if self._outgoing_packets.empty():
             return
 
-        other, packet = self._outgoing_packets.get()
-        if other == self:
+        recipient, packet = self._outgoing_packets.get()
+        if recipient == self:
             await self._send_packet(packet)
         else:
-            other.queue_outbound_packet(other, packet)
+            recipient.queue_outbound_packet(recipient, packet)
 
     async def _send_packet(self, packet: packets.Packet) -> None:
         self.logger.info(f"Sending packet: {packet}")
