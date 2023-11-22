@@ -26,9 +26,10 @@ func _ready():
 func _process(delta):
 	# Press SPACE to send a chat packet to the server
 	if Input.is_action_just_pressed("ui_accept"):
-		var my_chat_packet: Packets.ChatPacket = Packets.ChatPacket.new()
-		my_chat_packet.set_msg("Hello, world!")
-		_network_client.send_packet(Packets.PacketType.CHAT, my_chat_packet)
+		var my_packet: Packets.Packet = Packets.Packet.new()
+		var my_chat_packet = my_packet.new_chat()
+		my_chat_packet.set_msg("Hello world!")
+		_network_client.send_packet(my_packet)
 
 	# Press arrow keys to send direction packets to the server
 	var direction: Vector2 = Vector2.ZERO
@@ -42,19 +43,16 @@ func _process(delta):
 		direction.y -= 1
 
 	if direction != Vector2.ZERO and direction != previous_direction:
-		var my_direction_packet: Packets.DirectionPacket = Packets.DirectionPacket.new()
+		var p: Packets.Packet = Packets.Packet.new()
+		var my_direction_packet: Packets.DirectionPacket = p.new_direction()
 		my_direction_packet.set_dx(direction.x)
 		my_direction_packet.set_dy(direction.y)
-		_network_client.send_packet(Packets.PacketType.DIRECTION, my_direction_packet)
+		_network_client.send_packet(p)
 	
 	previous_direction = direction
 
-	
-
-
-func PLAY(packet_type: int, packet: Packets.Packet):
-	print("PLAY")
-	print(packet_type)
+func PLAY(packet: Packets.Packet):
+	print("Received packet")
 
 
 func _handle_client_connected():
@@ -66,8 +64,8 @@ func _handle_client_disconnected(code: int, reason: String):
 	get_tree().quit()
 
 
-func _handle_network_data(packet_type: int, packet: Packets.Packet):
-	state.call(packet_type, packet)
+func _handle_network_data(packet: Packets.Packet):
+	state.call(packet)
 
 
 func _handle_network_error(code: int):

@@ -59,6 +59,6 @@ async def main() -> None:
         nursery.start_soon(server.run)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logging.info("Server starting")
     trio.run(main)

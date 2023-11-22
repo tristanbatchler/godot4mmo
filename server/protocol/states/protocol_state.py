@@ -8,7 +8,7 @@ maintain the code.
 from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
-from server.net import DenyPacket, Packet
+from server.net import Packet, deny
 if TYPE_CHECKING:
     from server.protocol import GameProtocol
 
@@ -22,9 +22,8 @@ class ProtocolState(ABC):
 
     def _log_unregistered_packet(self, packet: Packet):
         self.proto.logger.warning(f"Received {packet.DESCRIPTOR.name} packet in unregistered state")
-        p: DenyPacket = DenyPacket()
-        p.reason = "You cannot send that packet in this state"
-        self.proto.queue_outbound_packet(self.proto, p)
+        d: Packet = deny("You cannot perform this action")
+        self.proto.queue_outbound_packet(self.proto, d)
 
     # Maintain all handle_*_packet methods in alphabetical order. This means classes that inherit
     # from this class will have the deny packet handler by default, unless they specifically

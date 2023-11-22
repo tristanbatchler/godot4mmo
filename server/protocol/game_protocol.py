@@ -118,7 +118,7 @@ class GameProtocol:
             other.queue_outbound_packet(other, packet)
 
     async def _send_packet(self, packet: packets.Packet) -> None:
-        self.logger.debug(f"Sending packet: {packet}")
+        self.logger.info(f"Sending packet: {packet}")
         await self._send_message(packet.SerializeToString())
 
     async def _read_message(self) -> Optional[bytes]:
@@ -149,7 +149,7 @@ class GameProtocol:
             self.logger.warning(f"Failed to decode packet: {exc}")
 
         # Dispatch to protocol state handler
-        packet_type: str = packet.WhichOneof("subpacket")
+        packet_type: str = packet.WhichOneof("type")
         handler_name: str = f"handle_{packet_type}_packet"
         handler: callable = getattr(self.state, handler_name)
         handler(getattr(packet, packet_type))

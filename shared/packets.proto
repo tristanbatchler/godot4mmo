@@ -1,18 +1,6 @@
 syntax = "proto3";
 package packets;
 
-// Define an enum for packet types
-enum PacketType {
-    OK = 0;
-    DENY = 1;
-    LOGIN = 2;
-    REGISTER = 3;
-    CHAT = 4;
-    POSITION = 5;
-    DIRECTION = 6;
-    // Add more packet types here
-}
-
 // Define your packet messages
 message OkPacket { }
 message DenyPacket { string reason = 1; }
@@ -25,8 +13,7 @@ message DirectionPacket { float dx = 1; float dy = 2; }
 
 // Define the main Packet message
 message Packet {
-    PacketType type = 1;
-    oneof subpacket {
+    oneof type {
         OkPacket ok = 2;
         DenyPacket deny = 3;
         LoginPacket login = 4;
