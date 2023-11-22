@@ -15,24 +15,28 @@ def _create_packet(packet_type: Packet, **kwargs) -> Packet:
     getattr(p, attr_name).CopyFrom(specific_packet)
     return p
 
+# Maintain all packet creation methods in alphabetical order. These are used for convenience to
+# quickly create packets from the protobuf definitions.
+
 # pylint: disable=missing-function-docstring
-def ok(message: str) -> Packet:
-    return _create_packet(OkPacket, msg=message)
+def chat(message: str) -> Packet:
+    return _create_packet(ChatPacket, msg=message)
 
 def deny(reason: str) -> Packet:
     return _create_packet(DenyPacket, reason=reason)
 
+def direction(dx: float, dy: float) -> Packet:
+    return _create_packet(DirectionPacket, dx=dx, dy=dy)
+
 def login(username: str, password: str) -> Packet:
     return _create_packet(LoginPacket, username=username, password=password)
 
-def register(username: str, password: str) -> Packet:
-    return _create_packet(RegisterPacket, username=username, password=password)
-
-def chat(message: str) -> Packet:
-    return _create_packet(ChatPacket, msg=message)
+def ok(message: str) -> Packet:
+    return _create_packet(OkPacket, msg=message)
 
 def position(x: float, y: float) -> Packet:
     return _create_packet(PositionPacket, x=x, y=y)
 
-def direction(dx: float, dy: float) -> Packet:
-    return _create_packet(DirectionPacket, dx=dx, dy=dy)
+def register(username: str, password: str) -> Packet:
+    return _create_packet(RegisterPacket, username=username, password=password)
+# pylint: enable=missing-function-docstring

@@ -3,7 +3,6 @@ This is the main entrypoint for the server. It creates a trio server that listen
 connections. Each connection is handled by a GameProtocol instance.
 """
 import logging
-import ssl
 import trio
 from trio_websocket import serve_websocket, WebSocketConnection, WebSocketRequest
 from server.protocol import GameProtocol
