@@ -5,6 +5,7 @@ extends Control
 @onready var chat_bar: HBoxContainer = $CanvasLayer/VBoxContainer/HBoxContainer
 
 signal chat_sent(message: String)
+signal disconnect
 
 func disable_chat():
 	chat_bar.hide()
@@ -28,3 +29,6 @@ func _on_line_edit_text_submitted(new_text):
 		input_field.clear()
 		add_message(new_text)
 		chat_sent.emit(new_text)
+
+func _on_button_disconnect_pressed():
+	disconnect.emit()

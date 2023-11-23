@@ -83,3 +83,12 @@ func _on_entry_register(username, password):
 	r.set_username(username)
 	r.set_password(password)
 	_network_client.send_packet(p)
+
+func _on_chatbox_disconnect():
+	_chatbox.disable_chat()
+	add_child(_entry)
+	state = ENTRY
+	var p: Packets.Packet = Packets.Packet.new()
+	var d: Packets.DisconnectPacket = p.new_disconnect()
+	d.set_reason("Logged out")
+	_network_client.send_packet(p)

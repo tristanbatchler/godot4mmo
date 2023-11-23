@@ -21,3 +21,5 @@ script = ExtResource("4_2hedk")
 [connection signal="disconnected" from="NetworkClient" to="." method="_on_network_client_disconnected"]
 [connection signal="error" from="NetworkClient" to="." method="_on_network_client_error"]
 [connection signal="received" from="NetworkClient" to="." method="_on_network_client_received"]
+[connection signal="chat_sent" from="Chatbox" to="." method="_on_chatbox_chat_sent"]
+[connection signal="disconnect" from="Chatbox" to="." method="_on_chatbox_disconnect"]

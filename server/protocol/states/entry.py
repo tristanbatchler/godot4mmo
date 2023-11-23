@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from server.models import User
 from server.net import Packet, RegisterPacket, LoginPacket, ok, deny
 from server.protocol.states.protocol_state import ProtocolState
-from server.protocol.states.play import PlayState
+import server.protocol.states as states
 
 class EntryState(ProtocolState):
     """
@@ -35,7 +35,7 @@ class EntryState(ProtocolState):
                 # Login successful
                 ok_packet: Packet = ok("Successfully logged in")
                 self.proto.queue_outbound_packet(self.proto, ok_packet)
-                self.proto.set_state(PlayState)
+                self.proto.set_state(states.PlayState)
 
             except SQLAlchemyError as exc:
                 error_msg: str = "An error occurred while logging in"
