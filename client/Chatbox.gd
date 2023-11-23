@@ -2,9 +2,16 @@ extends Control
 
 @onready var chat_log: RichTextLabel = $CanvasLayer/VBoxContainer/RichTextLabel
 @onready var input_field: LineEdit = $CanvasLayer/VBoxContainer/HBoxContainer/LineEdit
+@onready var chat_bar: HBoxContainer = $CanvasLayer/VBoxContainer/HBoxContainer
 
 signal chat_sent(message: String)
+
+func disable_chat():
+	chat_bar.hide()
 	
+func enable_chat():
+	chat_bar.show()
+
 func _input(event: InputEvent):
 	if event is InputEventKey and event.pressed:
 		match event.keycode:

@@ -19,7 +19,7 @@ git clone https://github.com/tristanbatchler/godot4mmo
 cd godot4mmo
 ```
 
-### 4. Setup the Python Virtual Environment**
+### 4. Setup the Python Virtual Environment
 ```bash
 python -m venv server/venv
 ```
