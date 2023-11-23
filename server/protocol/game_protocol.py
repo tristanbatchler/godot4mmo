@@ -7,6 +7,7 @@ from queue import Queue
 from typing import Optional
 from google.protobuf.message import DecodeError
 from trio_websocket import WebSocketConnection, ConnectionClosed
+from server.database import SessionMaker
 import server.net as packets
 from server.protocol import states
 from server.protocol.logging_adapter import ProtocolLoggerAdapter
@@ -15,13 +16,14 @@ class GameProtocol:
     """
     Represents the game protocol used for communication between the server and clients.
     """
-    def __init__(self, server_stream: WebSocketConnection,
-                 other_protocols: list[GameProtocol], ident: int) -> None:
+    def __init__(self, server_stream: WebSocketConnection, other_protocols: list[GameProtocol],
+                 ident: int, session_factory: SessionMaker) -> None:
         self._server_connection: WebSocketConnection = server_stream
         self._other_protocols: list[GameProtocol] = other_protocols
         self._outgoing_packets: Queue[tuple[GameProtocol, packets.Packet]] = Queue()
         self._ident: int = ident
-        self.state = states.EntryState(self)
+        self.session_factory = session_factory
+        self.state: states.ProtocolState = states.EntryState(self)
 
         # Give this protocol a unique identifier to improve logging
         self.logger = ProtocolLoggerAdapter(logging.getLogger(__name__), {
@@ -51,26 +53,30 @@ class GameProtocol:
             self.logger.info("Stopped")
             self._other_protocols.remove(self)
 
-    def set_state(self, state: states.ProtocolState) -> None:
+    def set_state(self, state_cls: type[states.ProtocolState]) -> None:
         """
         Sets the protocol state to the specified state.
 
         Args:
-            state (states.ProtocolState): The state to set.
+            state_cls (type[states.ProtocolState]): The class of the state to set the protocol to.
 
         Returns:
             None
+
+        Example:
+            >>> protocol.set_state(PlayState)
         """
-        if self.state is state:
-            self.logger.warning(f"State already set to {state}")
+        if isinstance(self.state, state_cls):
+            self.logger.warning(f"State already set to {self.state}")
             return
 
-        if state == states.ProtocolState:
+        if state_cls is states.ProtocolState:
             raise ValueError("Cannot set state to ProtocolState")
 
-        self.logger.info(f"State changing to {state}")
-        self.state = state
-        self.logger.extra['state'] = state
+        new_state: states.ProtocolState = state_cls(self)
+        self.logger.info(f"State changing to {new_state}")
+        self.state = new_state
+        self.logger.extra['state'] = new_state
 
     def queue_outbound_packet(self, recipient: GameProtocol, packet: packets.Packet) -> None:
         """
@@ -156,4 +162,8 @@ class GameProtocol:
         packet_type: str = packet.WhichOneof("type")
         handler_name: str = f"handle_{packet_type}_packet"
         handler: callable = getattr(self.state, handler_name)
-        handler(getattr(packet, packet_type))
+
+        try:
+            handler(getattr(packet, packet_type))
+        except TypeError:
+            self.logger.warning(f"State {self.state} does not implement {handler_name}")

@@ -1,5 +1,6 @@
+bcrypt
 trio-websocket
-sqlalchemy_aio
+sqlalchemy
 protobuf
 mypy-protobuf
 types-protobuf

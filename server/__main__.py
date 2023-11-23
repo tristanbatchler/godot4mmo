@@ -4,14 +4,17 @@ connections. Each connection is handled by a GameProtocol instance.
 """
 import logging
 import trio
-from trio_websocket import serve_websocket, WebSocketConnection, WebSocketRequest
+from trio_websocket import serve_websocket, WebSocketConnection, WebSocketRequest  # type: ignore
 from server.protocol import GameProtocol
+from server.database import SessionMaker
+from server.database.engine import init_engine, get_session_factory
 
 class GameServer:
     """
     Represents a websocket server that handles new connections for the game.
     """
     def __init__(self, tick_rate: float) -> None:
+        self._db_session_factory: SessionMaker = get_session_factory(init_engine())
         self._connected_protocols: list[GameProtocol] = []
         self._tick_rate: float = tick_rate
         self._num_connections = 0
@@ -26,7 +29,7 @@ class GameServer:
         logging.info("New connection")
         connection: WebSocketConnection = await request.accept()
         proto: GameProtocol = GameProtocol(connection, self._connected_protocols,
-                                           self._num_connections)
+                                           self._num_connections, self._db_session_factory)
         self._connected_protocols.append(proto)
         await proto.start()
 

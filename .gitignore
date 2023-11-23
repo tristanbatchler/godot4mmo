@@ -1,6 +1,7 @@
 server/venv/
 server/net/packets_pb2.py
 server/net/packets_pb2.pyi
+server/database/database.db
 client/.godot/
 client/addons/
 client/exports/
