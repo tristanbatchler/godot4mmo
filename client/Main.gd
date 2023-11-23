@@ -6,8 +6,11 @@ const Packets = preload("res://packets.gd")
 var state: Callable = PLAY
 var previous_direction: Vector2 = Vector2.ZERO
 
-@onready var _network_client: Node = get_node("NetworkClient")
-@onready var _chatbox: Control = get_node("Chatbox")
+@onready var _network_client: Node = $NetworkClient
+@onready var _chatbox: Control = $Chatbox
+
+func _ready():
+	_network_client.connected.connect(_on_network_client_connected)
 
 func PLAY(packet: Packets.Packet):
 	if packet.has_chat():
@@ -17,7 +20,6 @@ func PLAY(packet: Packets.Packet):
 	if packet.has_disconnect():
 		var reason: String = packet.get_disconnect().get_reason()
 		_chatbox.add_message("[color=#42D9FF]%s[/color]" % [reason])
-
 
 func _on_chatbox_chat_sent(message):
 	var p: Packets.Packet = Packets.Packet.new()

@@ -14,9 +14,9 @@ Welcome to the reboot of the [Godot Python MMO](https://tbat.me/projects/godot-p
 git clone https://github.com/tristanbatchler/godot4mmo
 ```
 
-### 3. Navigate to the Server Directory
+### 3. Navigate to the Project Directory
 ```bash
-cd godot4mmo/server
+cd godot4mmo
 ```
 
 ### 4. Setup the Python Virtual Environment**
@@ -45,6 +45,10 @@ pip install -r server/requirements.txt
 ```bash
 protoc -I="shared" --python_out="server/net" --mypy_out="server/net" "shared/packets.proto"
 ```
+> If you get an error saying `protoc: command not found` or something to that effect, you will have to download the 
+> binary for your system on the [official repository releases page](https://github.com/protocolbuffers/protobuf/releases) 
+> and move the binary into the `server/venv/bin` (for MacOS/Linux) or `server/venv/Scripts` (for Windows) folder and 
+> try the command again.
 
 ### 8. Run the Server
 ```bash

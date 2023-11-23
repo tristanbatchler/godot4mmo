@@ -1,8 +1,11 @@
-[gd_scene format=3 uid="uid://lddonltagi6g"]
+[gd_scene load_steps=2 format=3 uid="uid://lddonltagi6g"]
+
+[ext_resource type="Script" path="res://Chatbox.gd" id="1_8rm3u"]
 
 [node name="Chatbox" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_8rm3u")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -29,3 +32,5 @@ text = "[SAY]: "
 [node name="LineEdit" type="LineEdit" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[connection signal="text_submitted" from="CanvasLayer/VBoxContainer/HBoxContainer/LineEdit" to="." method="_on_line_edit_text_submitted"]
