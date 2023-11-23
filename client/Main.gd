@@ -4,7 +4,6 @@ extends Node
 const Packets = preload("res://packets.gd")
 
 var state: Callable = PLAY
-var previous_direction: Vector2 = Vector2.ZERO
 
 @onready var _network_client: Node = $NetworkClient
 @onready var _chatbox: Control = $Chatbox
