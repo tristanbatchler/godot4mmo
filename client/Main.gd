@@ -9,9 +9,6 @@ var previous_direction: Vector2 = Vector2.ZERO
 @onready var _network_client: Node = $NetworkClient
 @onready var _chatbox: Control = $Chatbox
 
-func _ready():
-	_network_client.connected.connect(_on_network_client_connected)
-
 func PLAY(packet: Packets.Packet):
 	if packet.has_chat():
 		var message: String = packet.get_chat().get_msg()
